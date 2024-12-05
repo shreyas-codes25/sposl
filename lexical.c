@@ -86,3 +86,11 @@ int main() {
     lexicalAnalyzer(input);
     return 0;
 }
+
+
+// int main() {
+//     int x = 5;
+//     float y = 10.5;
+//     x = x + y;
+//     return 0;
+// }
