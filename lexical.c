@@ -1,92 +1,142 @@
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 
-// Define some keywords
-const char* keywords[] = {
-    "int", "float", "return", "if", "else", "while", "for", "do", "break", "continue", "char", "double",
-};
-const int num_keywords = sizeof(keywords) / sizeof(keywords[0]);
+struct keyword{  // keywords
+char k[100];
+}kw[32];
 
-// Function to check if a string is a keyword
-int isKeyword(const char* str) {
-    for (int i = 0; i < num_keywords; i++) {
-        if (strcmp(str, keywords[i]) == 0) {
-            return 1;
-        }
-    }
-    return 0;
+struct operator{  // operators
+char op[10];
+}o[10];
+
+struct output{
+int sr;
+char name[100];
+char type[100];
+}out[500];   // tabular form
+
+int main()
+{
+FILE* ptr;  // file pointer
+int i,j, a=1, idflag=0;    //i and j are loop counters.
+//a is used to keep track of the serial number in the output table.
+//idflag is a flag to determine if a word has been categorized.
+//str is a character array used to read words from the input file.
+char str[100];
+ptr=fopen("pract2.c","r");
+
+// Predefined values for keywords
+strcpy(kw[0].k, "auto");
+strcpy(kw[1].k, "break");
+strcpy(kw[2].k, "case");
+strcpy(kw[3].k, "char");
+strcpy(kw[4].k, "const");
+strcpy(kw[5].k, "continue");
+strcpy(kw[6].k, "default");
+strcpy(kw[7].k, "do");
+strcpy(kw[8].k, "double");
+strcpy(kw[9].k, "else");
+strcpy(kw[10].k, "enum");
+strcpy(kw[11].k, "extern");
+strcpy(kw[12].k, "float");
+strcpy(kw[13].k, "for");
+strcpy(kw[14].k, "goto");
+strcpy(kw[15].k, "if");
+strcpy(kw[16].k, "int");
+strcpy(kw[17].k, "long");
+strcpy(kw[18].k, "register");
+strcpy(kw[19].k, "return");
+strcpy(kw[20].k, "short");
+strcpy(kw[21].k, "signed");
+strcpy(kw[22].k, "sizeof");
+strcpy(kw[23].k, "static");
+strcpy(kw[24].k, "struct");
+strcpy(kw[25].k, "switch");
+strcpy(kw[26].k, "typedef");
+strcpy(kw[27].k, "union");
+strcpy(kw[28].k, "unsigned");
+strcpy(kw[29].k, "void");
+strcpy(kw[30].k, "volatile");
+strcpy(kw[31].k, "while");
+
+
+// predefined values for operators
+strcpy(o[0].op, "*");
+strcpy(o[1].op, "+");
+strcpy(o[2].op, "=");
+strcpy(o[3].op, "-");
+// Read the file and compare the strings
+if(ptr==NULL)
+{
+printf("File is empty");
 }
-
-// Function to check if a character is an operator
-int isOperator(char ch) {
-    char operators[] = "+-*/%=<>";
-    for (int i = 0; i < strlen(operators); i++) {
-        if (ch == operators[i]) {
-            return 1;
-        }
-    }
-    return 0;
+else
+{
+	;while(fscanf(ptr, "%s",str)!= EOF)
+	{
+	idflag=0;
+	for(i=0;i<=32;i++)  // keywords check 
+	{  
+		if(strcmp(str,kw[i].k)==0)
+		{
+		  	 out[a].sr=a;
+		  	 strcpy(out[a].name,str);
+		  	 strcpy(out[a].type,"Keyword");
+		  	 a++;
+		  	 idflag=1;		  	
+		  	 break;
+		}
+	}
+	if(str[0]=='#' || str[0]=='(' || str[0]==')' || str[0]=='{' || str[0]=='}' ||str[0]==';' || str[0]=='<' || str[0]=='>')
+	{
+	  	 out[a].sr=a;
+	  	 strcpy(out[a].name,str);
+	  	 strcpy(out[a].type,"Special Symbol");
+	  	 a++;
+	  	 idflag=1;	  
+	}
+	if(str[0]=='1' || str[0]=='2' ||str[0]=='3' ||str[0]=='4' ||str[0]=='5' ||str[0]=='6' || str[0]=='7' || str[0]=='8' || str[0]=='9')
+	{
+	  	out[a].sr=a;
+	  	strcpy(out[a].name,str);
+	          strcpy(out[a].type,"Constant");
+	  	a++;
+  		idflag=1;
+	}
+	for(i=0;i<10;i++)
+	{
+	 	if(strcmp(str,o[i].op)==0)
+	  	{
+	  		out[a].sr=a;
+	  	 	strcpy(out[a].name,str);
+	  	 	strcpy(out[a].type,"Operator");
+	  	 	a++;
+	  	 	idflag=1;
+	  	}
+	}
+	  	
+	if(idflag==0)
+	{
+	  	 out[a].sr=a;
+	  	 strcpy(out[a].name,str);
+	  	 strcpy(out[a].type,"Identifier");
+	  	 a++;
+	  	 idflag=1;
+	}
+	  
+	}
 }
+// Display output
 
-// Function to check if a character is a punctuator
-int isPunctuator(char ch) {
-    char punctuators[] = ".,;(){}[]";
-    for (int i = 0; i < strlen(punctuators); i++) {
-        if (ch == punctuators[i]) {
-            return 1;
-        }
-    }
-    return 0;
+printf("Sr.No.\tName\tType\t\n");
+for(j=1;j<a;j++)
+  {
+  printf("%d\t%s\t%s\t\n",out[j].sr, out[j].name, out[j].type);
+  }
+  
+  fclose(ptr);
 }
-
-// Function to print the lexical analyzer table
-void lexicalAnalyzer(const char* str) {
-    int i = 0;
-    int serialNo = 1;  // Initialize serial number
-    char token[100];
-
-    printf("S.No\tToken\t\tType\n");
-    printf("----------------------------\n");
-
-    while (str[i] != '\0') {
-        if (isalpha(str[i])) {  // Start of a keyword or identifier
-            int j = 0;
-            while (isalnum(str[i])) {
-                token[j++] = str[i++];
-            }
-            token[j] = '\0';
-            if (isKeyword(token)) {
-                printf("%d\t%s\t\tKeyword\n", serialNo++, token);
-            } else {
-                printf("%d\t%s\t\tIdentifier\n", serialNo++, token);
-            }
-        } else if (isdigit(str[i])) {  // Start of a number
-            int j = 0;
-            while (isdigit(str[i])) {
-                token[j++] = str[i++];
-            }
-            token[j] = '\0';
-            printf("%d\t%s\t\tNumber\n", serialNo++, token);
-        } else if (isOperator(str[i])) {  // Operator
-            printf("%d\t%c\t\tOperator\n", serialNo++, str[i]);
-            i++;
-        } else if (isPunctuator(str[i])) {  // Punctuator
-            printf("%d\t%c\t\tPunctuator\n", serialNo++, str[i]);
-            i++;
-        } else {  // Any other character (skip whitespaces)
-            i++;
-        }
-    }
-}
-
-int main() {
-    //const char* input = "int x = 10; float y = x + 3.14;";
-    const char* input = " sum = count + rate* 50 ; ";
-    lexicalAnalyzer(input);
-    return 0;
-}
-
 
 // int main() {
 //     int x = 5;
