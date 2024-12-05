@@ -238,3 +238,15 @@ int main()
     fclose(fp);
     return 0;
 }
+
+
+
+//  START 100
+// MOVER AREG, ='5'
+// ADD BREG, X
+// MOVEM CREG, ='1'
+// MOVER BREG, Y
+// X DS 1
+// Y DS 1
+// END
+
